@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Menu, Search, User } from 'lucide-react'
+import { Droplet, Menu, Search, User } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -31,7 +31,7 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
         {/* menu mobile */}
         <Sheet>
@@ -58,7 +58,7 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
                   render={
                     <Link
                       href={`/categorias/${c.slug}`}
-                      className="rounded-md px-2 py-2 text-sm hover:bg-muted"
+                      className="rounded-md px-2 py-2 text-sm hover:bg-muted hover:text-accent"
                     />
                   }
                 >
@@ -69,19 +69,22 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
           </SheetContent>
         </Sheet>
 
-        <Link
-          href="/"
-          className="font-heading text-lg font-bold tracking-tight whitespace-nowrap"
-        >
-          MINI VAT <span className="text-muted-foreground">PREMIUM</span>
+        {/* logo */}
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="gradient-minivat-cyan flex size-8 shrink-0 items-center justify-center rounded-lg">
+            <Droplet className="size-5 text-white" />
+          </span>
+          <span className="text-lg font-bold whitespace-nowrap">
+            MINI VAT <span className="text-muted-foreground">PREMIUM</span>
+          </span>
         </Link>
 
-        <nav className="ml-4 hidden items-center gap-4 md:flex">
+        <nav className="ml-4 hidden items-center gap-5 md:flex">
           {categories.map((c) => (
             <Link
               key={c.slug}
               href={`/categorias/${c.slug}`}
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-sm text-muted-foreground transition-colors hover:text-accent"
             >
               {c.name}
             </Link>

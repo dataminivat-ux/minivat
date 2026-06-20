@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pasta de referencia (design system) e configs locais
+/minivat_design_system
+.claude/settings.local.json

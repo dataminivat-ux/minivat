@@ -52,17 +52,22 @@ export default async function HomePage() {
   return (
     <div>
       {/* HERO */}
-      <section className="relative overflow-hidden border-b bg-gradient-to-br from-muted/60 via-background to-background">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        <div className="pointer-events-none absolute inset-0 opacity-25">
+          <div className="absolute top-10 left-10 size-72 rounded-full bg-cyan-500 mix-blend-screen blur-3xl" />
+          <div className="absolute right-10 bottom-0 size-72 rounded-full bg-blue-500 mix-blend-screen blur-3xl" />
+        </div>
+
+        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-20 md:grid-cols-2 md:py-28">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium text-cyan-300">
               <Sparkles className="size-3" /> Acessorios 3D para odontologia
             </span>
-            <h1 className="mt-5 font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+            <h1 className="mt-5 text-4xl leading-tight font-bold md:text-5xl">
               Precisao premium para sua{' '}
-              <span className="text-primary">impressao 3D</span>
+              <span className="text-gradient-cyan">impressao 3D</span>
             </h1>
-            <p className="mt-4 max-w-md text-muted-foreground">
+            <p className="mt-4 max-w-md text-lg text-slate-300">
               Cubetas, mesas e acessorios de alta durabilidade para laboratorios
               e clinicas odontologicas.
             </p>
@@ -76,38 +81,41 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/categorias/mini-vat"
-                className={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/30 px-5 text-sm font-medium text-white transition hover:bg-white/10"
               >
-                Mini VATs
+                Conhecer Mini VATs
               </Link>
             </div>
           </div>
 
-          <div className="relative aspect-square overflow-hidden rounded-3xl border bg-muted shadow-xl">
-            {heroImage && (
-              <Image
-                src={heroImage}
-                alt="Produto MINI VAT PREMIUM"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-                priority
-              />
-            )}
+          <div className="relative">
+            <div className="gradient-minivat-cyan absolute -inset-3 rounded-[2rem] opacity-30 blur-2xl" />
+            <div className="relative aspect-square overflow-hidden rounded-[1.75rem] border border-white/10 shadow-premium-dark">
+              {heroImage && (
+                <Image
+                  src={heroImage}
+                  alt="Produto MINI VAT PREMIUM"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  priority
+                />
+              )}
+            </div>
           </div>
         </div>
       </section>
 
       {/* BENEFITS */}
-      <section className="border-b bg-muted/20">
+      <section className="border-b">
         <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:grid-cols-3">
           {BENEFITS.map((b) => (
             <div key={b.title} className="flex items-start gap-3">
-              <div className="rounded-lg bg-primary/10 p-2 text-primary">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <b.icon className="size-5" />
               </div>
               <div>
-                <p className="text-sm font-medium">{b.title}</p>
+                <p className="text-sm font-semibold">{b.title}</p>
                 <p className="text-sm text-muted-foreground">{b.desc}</p>
               </div>
             </div>
@@ -117,13 +125,13 @@ export default async function HomePage() {
 
       {/* CATEGORIAS */}
       <section className="mx-auto max-w-6xl px-4 py-14">
-        <h2 className="font-heading text-2xl font-bold">Categorias</h2>
+        <h2 className="text-3xl font-bold">Categorias</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {categories.map((c) => (
             <Link
               key={c.slug}
               href={`/categorias/${c.slug}`}
-              className="group rounded-2xl border p-6 transition hover:border-foreground/20 hover:shadow-md"
+              className="group rounded-2xl border bg-card p-6 transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-premium"
             >
               <p className="text-lg font-semibold">{c.name}</p>
               {c.description && (
@@ -131,7 +139,7 @@ export default async function HomePage() {
                   {c.description}
                 </p>
               )}
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
                 Explorar
                 <ArrowRight className="size-4 transition group-hover:translate-x-1" />
               </span>
@@ -144,10 +152,10 @@ export default async function HomePage() {
       {featured.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 pb-16">
           <div className="flex items-end justify-between">
-            <h2 className="font-heading text-2xl font-bold">Em destaque</h2>
+            <h2 className="text-3xl font-bold">Em destaque</h2>
             <Link
               href="/produtos"
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="text-sm font-medium text-accent hover:underline"
             >
               Ver todos
             </Link>
