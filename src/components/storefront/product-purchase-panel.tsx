@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Minus, Plus, ShoppingCart } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useCartStore, type CartItem } from '@/stores/cart-store'
+import { trackAddToCart, trackViewItem } from '@/lib/analytics/events'
 import { formatBRL, formatInstallments } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -54,6 +55,17 @@ export function ProductPurchasePanel({
     product.compare_at_price_cents != null &&
     product.compare_at_price_cents > priceCents
 
+  // view_item ao montar a PDP
+  useEffect(() => {
+    trackViewItem({
+      item_id: product.sku,
+      item_name: product.name,
+      price: product.price_cents / 100,
+      quantity: 1,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   function handleAdd() {
     if (outOfStock) return
     const item: CartItem = {
@@ -70,6 +82,13 @@ export function ProductPurchasePanel({
       attributes: variant?.options ?? {},
     }
     addItem(item)
+    trackAddToCart({
+      item_id: variant?.sku ?? product.sku,
+      item_name: product.name,
+      item_variant: variant?.name ?? undefined,
+      price: priceCents / 100,
+      quantity: qty,
+    })
     toast.success('Adicionado ao carrinho', { description: product.name })
   }
 

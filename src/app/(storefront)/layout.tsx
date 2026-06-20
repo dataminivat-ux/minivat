@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { Header } from '@/components/storefront/header'
 import { Footer } from '@/components/storefront/footer'
+import { Analytics } from '@/components/shared/analytics'
+import { CookieBanner } from '@/components/shared/cookie-banner'
 import { Toaster } from '@/components/ui/sonner'
 
 // Layout da area publica: header (com categorias do banco), footer e toasts.
@@ -19,9 +21,11 @@ export default async function StorefrontLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
+      <Analytics />
       <Header categories={categories ?? []} />
       <main className="flex-1">{children}</main>
       <Footer />
+      <CookieBanner />
       <Toaster />
     </div>
   )

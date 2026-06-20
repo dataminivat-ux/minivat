@@ -6,6 +6,7 @@ import { Minus, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useCartStore } from '@/stores/cart-store'
+import { trackViewCart } from '@/lib/analytics/events'
 import { formatBRL } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -18,6 +19,22 @@ export default function CarrinhoPage() {
 
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
+
+  // view_cart ao abrir a pagina do carrinho
+  useEffect(() => {
+    if (!mounted || items.length === 0) return
+    trackViewCart(
+      items.map((i) => ({
+        item_id: i.sku,
+        item_name: i.product_name,
+        item_variant: i.variant_name ?? undefined,
+        price: i.price_cents / 100,
+        quantity: i.quantity,
+      })),
+      subtotal / 100
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted])
 
   if (!mounted) {
     return <div className="mx-auto min-h-[40vh] max-w-4xl px-4 py-10" />

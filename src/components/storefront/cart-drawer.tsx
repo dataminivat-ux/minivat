@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 
 import { useCartStore } from '@/stores/cart-store'
+import { trackViewCart } from '@/lib/analytics/events'
 import { formatBRL } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -30,8 +31,25 @@ export function CartDrawer() {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
+  const [open, setOpen] = useState(false)
+  function handleOpenChange(next: boolean) {
+    setOpen(next)
+    if (next && items.length > 0) {
+      trackViewCart(
+        items.map((i) => ({
+          item_id: i.sku,
+          item_name: i.product_name,
+          item_variant: i.variant_name ?? undefined,
+          price: i.price_cents / 100,
+          quantity: i.quantity,
+        })),
+        subtotal / 100
+      )
+    }
+  }
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger
         render={
           <Button
