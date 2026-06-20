@@ -19,8 +19,23 @@ export default async function StorefrontLayout({
     .is('deleted_at', null)
     .order('sort_order')
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.minivatpremium.com.br'
+  const orgLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'MINI VAT PREMIUM',
+    url: siteUrl,
+    description:
+      'Acessorios premium para impressao 3D odontologica: cubetas, mesas e mais.',
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
+      />
       <Analytics />
       <Header categories={categories ?? []} />
       <main className="flex-1">{children}</main>

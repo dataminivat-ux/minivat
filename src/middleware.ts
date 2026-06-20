@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-// Protege /admin/* e /api/admin/*: exige sessao + role admin/staff.
+// Protege /conta (exige login) e /admin (exige role admin/staff).
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
 
@@ -21,25 +21,30 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const path = req.nextUrl.pathname
+  const needsAdmin = path.startsWith('/admin') || path.startsWith('/api/admin')
+
   if (!user) {
     const url = new URL('/entrar', req.url)
-    url.searchParams.set('next', req.nextUrl.pathname)
+    url.searchParams.set('next', path)
     return NextResponse.redirect(url)
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  if (needsAdmin) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
 
-  if (!profile || !['admin', 'staff'].includes(profile.role)) {
-    return NextResponse.redirect(new URL('/', req.url))
+    if (!profile || !['admin', 'staff'].includes(profile.role)) {
+      return NextResponse.redirect(new URL('/', req.url))
+    }
   }
 
   return res
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/conta/:path*'],
 }

@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ImageIcon } from 'lucide-react'
+import { ImageIcon, Star } from 'lucide-react'
 
 import { createClient } from '@/lib/supabase/server'
 import {
   ProductPurchasePanel,
   type PanelVariant,
 } from '@/components/storefront/product-purchase-panel'
+import { WishlistButton } from '@/components/storefront/wishlist-button'
 
 type Params = Promise<{ slug: string }>
 
@@ -24,7 +25,7 @@ async function getProductData(slug: string) {
 
   if (!product) return null
 
-  const [variantsRes, imagesRes] = await Promise.all([
+  const [variantsRes, imagesRes, reviewsRes] = await Promise.all([
     supabase
       .from('product_variants')
       .select('id, sku, name, price_cents, stock, options')
@@ -35,6 +36,13 @@ async function getProductData(slug: string) {
       .select('url, alt_text, is_primary, sort_order')
       .eq('product_id', product.id)
       .order('sort_order'),
+    supabase
+      .from('reviews')
+      .select('rating, title, body, created_at')
+      .eq('product_id', product.id)
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .limit(20),
   ])
 
   let category: { slug: string; name: string } | null = null
@@ -52,6 +60,7 @@ async function getProductData(slug: string) {
     variants: variantsRes.data ?? [],
     images: imagesRes.data ?? [],
     category,
+    reviews: reviewsRes.data ?? [],
   }
 }
 
@@ -79,7 +88,7 @@ export default async function ProductPage({ params }: { params: Params }) {
   const data = await getProductData(slug)
   if (!data) notFound()
 
-  const { product, images, category } = data
+  const { product, images, category, reviews } = data
   const variants: PanelVariant[] = data.variants.map((v) => ({
     id: v.id,
     sku: v.sku,
@@ -91,6 +100,25 @@ export default async function ProductPage({ params }: { params: Params }) {
 
   const primaryImage =
     images.find((i) => i.is_primary)?.url ?? images[0]?.url ?? null
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  let inWishlist = false
+  if (user) {
+    const { data: w } = await supabase
+      .from('wishlist_items')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('product_id', product.id)
+      .maybeSingle()
+    inWishlist = Boolean(w)
+  }
+
+  const avgRating = reviews.length
+    ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length
+    : 0
 
   // JSON-LD basico (Product) — schema markup para SEO
   const jsonLd = {
@@ -178,7 +206,26 @@ export default async function ProductPage({ params }: { params: Params }) {
 
         {/* info + compra */}
         <div>
-          <h1 className="font-heading text-3xl font-bold">{product.name}</h1>
+          <h1 className="text-3xl font-bold">{product.name}</h1>
+          {reviews.length > 0 && (
+            <div className="mt-2 flex items-center gap-2 text-sm">
+              <span className="flex">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={
+                      i < Math.round(avgRating)
+                        ? 'size-4 fill-amber-400 text-amber-400'
+                        : 'size-4 text-muted-foreground/30'
+                    }
+                  />
+                ))}
+              </span>
+              <span className="text-muted-foreground">
+                {avgRating.toFixed(1)} ({reviews.length})
+              </span>
+            </div>
+          )}
           {product.short_description && (
             <p className="mt-2 text-muted-foreground">
               {product.short_description}
@@ -202,9 +249,16 @@ export default async function ProductPage({ params }: { params: Params }) {
             />
           </div>
 
+          <div className="mt-3">
+            <WishlistButton
+              productId={product.id}
+              initialInWishlist={inWishlist}
+            />
+          </div>
+
           {product.description && (
             <div className="mt-8 border-t pt-6">
-              <h2 className="font-heading text-lg font-semibold">Descricao</h2>
+              <h2 className="text-lg font-semibold">Descricao</h2>
               <p className="mt-2 whitespace-pre-line text-sm text-muted-foreground">
                 {product.description}
               </p>
@@ -212,6 +266,39 @@ export default async function ProductPage({ params }: { params: Params }) {
           )}
         </div>
       </div>
+
+      {/* avaliacoes */}
+      <section className="mt-12 border-t pt-8">
+        <h2 className="text-lg font-semibold">Avaliacoes</h2>
+        {reviews.length === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Este produto ainda nao tem avaliacoes.
+          </p>
+        ) : (
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+            {reviews.map((r, i) => (
+              <li key={i} className="rounded-xl border p-4">
+                <span className="flex">
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <Star
+                      key={j}
+                      className={
+                        j < r.rating
+                          ? 'size-4 fill-amber-400 text-amber-400'
+                          : 'size-4 text-muted-foreground/30'
+                      }
+                    />
+                  ))}
+                </span>
+                {r.title && <p className="mt-2 text-sm font-medium">{r.title}</p>}
+                {r.body && (
+                  <p className="mt-1 text-sm text-muted-foreground">{r.body}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   )
 }

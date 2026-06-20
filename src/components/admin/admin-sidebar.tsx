@@ -20,18 +20,16 @@ import { signOut } from '@/lib/actions/auth'
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
   { href: '/admin/produtos', label: 'Produtos', icon: Package },
   { href: '/admin/categorias', label: 'Categorias', icon: FolderTree },
+  { href: '/admin/cupons', label: 'Cupons', icon: Ticket },
+  { href: '/admin/clientes', label: 'Clientes', icon: Users },
+  { href: '/admin/avaliacoes', label: 'Avaliacoes', icon: Star },
+  { href: '/admin/configuracoes', label: 'Configuracoes', icon: Settings },
 ]
 
-const SOON = [
-  { label: 'Pedidos', icon: ShoppingBag },
-  { label: 'Cupons', icon: Ticket },
-  { label: 'Banners', icon: Images },
-  { label: 'Clientes', icon: Users },
-  { label: 'Avaliacoes', icon: Star },
-  { label: 'Configuracoes', icon: Settings },
-]
+const SOON = [{ label: 'Banners', icon: Images }]
 
 export function AdminSidebar({ email }: { email: string }) {
   const pathname = usePathname()
