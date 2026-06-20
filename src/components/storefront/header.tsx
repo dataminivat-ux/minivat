@@ -55,6 +55,7 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
               {categories.map((c) => (
                 <SheetClose
                   key={c.slug}
+                  nativeButton={false}
                   render={
                     <Link
                       href={`/categorias/${c.slug}`}

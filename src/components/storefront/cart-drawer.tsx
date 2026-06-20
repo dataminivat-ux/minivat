@@ -140,6 +140,7 @@ export function CartDrawer() {
             <span className="font-semibold">{formatBRL(subtotal)}</span>
           </div>
           <SheetClose
+            nativeButton={false}
             render={
               <Link
                 href="/carrinho"
