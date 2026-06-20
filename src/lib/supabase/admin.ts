@@ -1,3 +1,4 @@
+import 'server-only' // previne import acidental em Client Components
 import { createClient } from '@supabase/supabase-js'
 
 import type { Database } from './types'
