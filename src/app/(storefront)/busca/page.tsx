@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { createClient } from '@/lib/supabase/server'
+import { withPrimaryImages } from '@/lib/catalog'
 import {
   ProductCard,
   type ProductCardData,
@@ -26,12 +27,12 @@ export default async function BuscaPage({
     const supabase = await createClient()
     const { data } = await supabase
       .from('products')
-      .select('slug, name, price_cents, compare_at_price_cents, stock')
+      .select('id, slug, name, price_cents, compare_at_price_cents, stock')
       .textSearch('search_tsv', q, { type: 'websearch', config: 'portuguese' })
       .eq('is_active', true)
       .is('deleted_at', null)
       .limit(50)
-    list = data ?? []
+    list = await withPrimaryImages(supabase, data ?? [])
   }
 
   return (

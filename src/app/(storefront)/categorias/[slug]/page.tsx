@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
+import { withPrimaryImages } from '@/lib/catalog'
 import { ProductCard } from '@/components/storefront/product-card'
 
 type Params = Promise<{ slug: string }>
@@ -40,13 +41,13 @@ export default async function CategoryPage({ params }: { params: Params }) {
   const supabase = await createClient()
   const { data: products } = await supabase
     .from('products')
-    .select('slug, name, price_cents, compare_at_price_cents, stock')
+    .select('id, slug, name, price_cents, compare_at_price_cents, stock')
     .eq('is_active', true)
     .eq('category_id', category.id)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
-  const list = products ?? []
+  const list = await withPrimaryImages(supabase, products ?? [])
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">

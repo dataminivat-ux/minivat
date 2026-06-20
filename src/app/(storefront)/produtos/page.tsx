@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/server'
+import { withPrimaryImages } from '@/lib/catalog'
 import { ProductCard } from '@/components/storefront/product-card'
 import { cn } from '@/lib/utils'
 
@@ -29,7 +30,7 @@ export default async function ProdutosPage({
   const supabase = await createClient()
   let query = supabase
     .from('products')
-    .select('slug, name, price_cents, compare_at_price_cents, stock')
+    .select('id, slug, name, price_cents, compare_at_price_cents, stock')
     .eq('is_active', true)
     .is('deleted_at', null)
 
@@ -42,7 +43,7 @@ export default async function ProdutosPage({
   }
 
   const { data: products } = await query.limit(60)
-  const list = products ?? []
+  const list = await withPrimaryImages(supabase, products ?? [])
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
