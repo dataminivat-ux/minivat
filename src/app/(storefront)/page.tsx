@@ -1,25 +1,100 @@
-import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
-// Home temporaria — valida a conexao com o Supabase listando as categorias
-// ativas (seed). Sera substituida pela home real no Sprint 1.
+import { createClient } from '@/lib/supabase/server'
+import { ProductCard } from '@/components/storefront/product-card'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+
 export default async function HomePage() {
   const supabase = await createClient()
-  const { data: categories, error } = await supabase
-    .from('categories')
-    .select('name, slug')
-    .eq('is_active', true)
-    .order('sort_order')
+
+  const [featuredRes, categoriesRes] = await Promise.all([
+    supabase
+      .from('products')
+      .select('slug, name, price_cents, compare_at_price_cents, stock')
+      .eq('is_active', true)
+      .eq('is_featured', true)
+      .is('deleted_at', null)
+      .limit(8),
+    supabase
+      .from('categories')
+      .select('slug, name, description')
+      .eq('is_active', true)
+      .is('deleted_at', null)
+      .order('sort_order'),
+  ])
+
+  const featured = featuredRes.data ?? []
+  const categories = categoriesRes.data ?? []
 
   return (
-    <main className="mx-auto min-h-screen max-w-2xl p-8">
-      <h1 className="text-4xl font-bold">MINI VAT PREMIUM</h1>
-      <p className="text-muted-foreground mt-2">Em construcao</p>
+    <div>
+      {/* hero */}
+      <section className="border-b bg-muted/30">
+        <div className="mx-auto max-w-6xl px-4 py-20 text-center">
+          <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+            MINI VAT PREMIUM
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+            Acessorios premium para impressao 3D odontologica. Precisao,
+            durabilidade e acabamento de alto padrao.
+          </p>
+          <Link
+            href="/produtos"
+            className={cn(buttonVariants({ size: 'lg' }), 'mt-8')}
+          >
+            Ver produtos
+            <ArrowRight />
+          </Link>
+        </div>
+      </section>
 
-      <h2 className="mt-8 text-2xl font-semibold">Categorias</h2>
-      <ul className="mt-4 list-disc pl-6">
-        {categories?.map((c) => <li key={c.slug}>{c.name}</li>)}
-      </ul>
-      {error && <p className="mt-4 text-destructive">{error.message}</p>}
-    </main>
+      {/* categorias */}
+      <section className="mx-auto max-w-6xl px-4 py-12">
+        <h2 className="font-heading text-2xl font-semibold">Categorias</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/categorias/${c.slug}`}
+              className="group rounded-xl border p-6 transition hover:border-foreground/30 hover:bg-muted/40"
+            >
+              <p className="font-medium">{c.name}</p>
+              {c.description && (
+                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                  {c.description}
+                </p>
+              )}
+              <span className="mt-3 inline-flex items-center gap-1 text-sm text-primary">
+                Ver produtos <ArrowRight className="size-4" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* destaques */}
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 py-12">
+          <div className="flex items-end justify-between">
+            <h2 className="font-heading text-2xl font-semibold">
+              Produtos em destaque
+            </h2>
+            <Link
+              href="/produtos"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Ver todos
+            </Link>
+          </div>
+          <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {featured.map((p) => (
+              <ProductCard key={p.slug} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
   )
 }
