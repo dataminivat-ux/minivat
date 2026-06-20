@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Minus, Plus, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { useCartStore } from '@/stores/cart-store'
 import { trackViewCart } from '@/lib/analytics/events'
@@ -128,15 +127,12 @@ export default function CarrinhoPage() {
           <p className="mt-1 text-xs text-muted-foreground">
             Frete calculado no checkout.
           </p>
-          <Button
-            className="mt-4 w-full"
-            size="lg"
-            onClick={() =>
-              toast.info('Checkout disponivel no proximo sprint.')
-            }
+          <Link
+            href="/checkout"
+            className={cn(buttonVariants({ size: 'lg' }), 'mt-4 w-full')}
           >
             Finalizar compra
-          </Button>
+          </Link>
           <Link
             href="/produtos"
             className={cn(

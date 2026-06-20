@@ -880,6 +880,27 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_events: {
+        Row: {
+          id: string
+          provider: string
+          event_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          provider: string
+          event_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          provider?: string
+          event_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       products_with_default_price: {
@@ -923,11 +944,18 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      create_order_with_items: {
+        Args: {
+          p_order: Json
+          p_items: Json
+        }
+        Returns: Database['public']['Tables']['orders']['Row']
+      }
       validate_coupon: {
         Args: {
           p_code: string
           p_subtotal_cents: number
-          p_user_id: string
+          p_user_id: string | null
         }
         Returns: Json
       }
