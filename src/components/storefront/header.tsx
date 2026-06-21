@@ -72,7 +72,7 @@ export function Header({ categories }: { categories: HeaderCategory[] }) {
 
         {/* logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="gradient-minivat-cyan flex size-8 shrink-0 items-center justify-center rounded-lg">
+          <span className="gradient-minivat-gold flex size-8 shrink-0 items-center justify-center rounded-lg">
             <Droplet className="size-5 text-white" />
           </span>
           <span className="text-lg font-bold whitespace-nowrap">

@@ -52,20 +52,20 @@ export default async function HomePage() {
   return (
     <div>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
         <div className="pointer-events-none absolute inset-0 opacity-25">
-          <div className="absolute top-10 left-10 size-72 rounded-full bg-cyan-500 mix-blend-screen blur-3xl" />
-          <div className="absolute right-10 bottom-0 size-72 rounded-full bg-blue-500 mix-blend-screen blur-3xl" />
+          <div className="absolute top-10 left-10 size-72 rounded-full bg-yellow-500 mix-blend-screen blur-3xl" />
+          <div className="absolute right-10 bottom-0 size-72 rounded-full bg-amber-500 mix-blend-screen blur-3xl" />
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-20 md:grid-cols-2 md:py-28">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium text-cyan-300">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium text-amber-300">
               <Sparkles className="size-3" /> Acessorios 3D para odontologia
             </span>
             <h1 className="mt-5 text-4xl leading-tight font-bold md:text-5xl">
               Precisao premium para sua{' '}
-              <span className="text-gradient-cyan">impressao 3D</span>
+              <span className="text-gradient-gold">impressao 3D</span>
             </h1>
             <p className="mt-4 max-w-md text-lg text-slate-300">
               Cubetas, mesas e acessorios de alta durabilidade para laboratorios
@@ -89,7 +89,7 @@ export default async function HomePage() {
           </div>
 
           <div className="relative">
-            <div className="gradient-minivat-cyan absolute -inset-3 rounded-[2rem] opacity-30 blur-2xl" />
+            <div className="gradient-minivat-gold absolute -inset-3 rounded-[2rem] opacity-30 blur-2xl" />
             <div className="relative aspect-square overflow-hidden rounded-[1.75rem] border border-white/10 shadow-premium-dark">
               {heroImage && (
                 <Image

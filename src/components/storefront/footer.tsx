@@ -25,7 +25,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="gradient-minivat-cyan flex size-8 items-center justify-center rounded-lg">
+              <span className="gradient-minivat-gold flex size-8 items-center justify-center rounded-lg">
                 <Droplet className="size-5 text-white" />
               </span>
               <span className="text-lg font-bold text-white">
@@ -44,7 +44,7 @@ export function Footer() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm text-slate-400 transition hover:text-cyan-400"
+                className="text-sm text-slate-400 transition hover:text-amber-400"
               >
                 {l.label}
               </Link>
@@ -57,7 +57,7 @@ export function Footer() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm text-slate-400 transition hover:text-cyan-400"
+                className="text-sm text-slate-400 transition hover:text-amber-400"
               >
                 {l.label}
               </Link>
